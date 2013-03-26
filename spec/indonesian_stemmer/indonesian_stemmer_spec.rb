@@ -80,6 +80,84 @@ describe IndonesianStemmer do
       end
     end
   end
+
+  describe '#remove_first_order_prefix' do
+    describe "words with these special characters" do
+      describe "at the begining" do
+        describe "followed by a vowel, should remove and substitute the last character" do
+          it "'meny'" do
+            should_transform(:remove_first_order_prefix, 'menyambung', 'sambung')
+          end
+
+          it "'peny'" do
+            should_transform(:remove_first_order_prefix, 'penyantap', 'santap')
+          end
+
+          it "'pen'" do
+            should_transform(:remove_first_order_prefix, 'penata', 'tata')
+          end
+        end
+
+        describe "followed by consonant, should only remove the special characters" do
+          it "'meny'" do
+            # TODO: Find a real indonesian word for this case
+            should_transform(:remove_first_order_prefix, 'menyxxx', 'xxx')
+          end
+
+          it "'peny'" do
+            # TODO: Find a real indonesian word for this case
+            should_transform(:remove_first_order_prefix, 'penyxxx', 'xxx')
+          end
+
+          it "'pen'" do
+            should_transform(:remove_first_order_prefix, 'penjahat', 'jahat')
+          end
+        end
+      end
+
+      describe "at the rest part of the word" do
+        describe "followed by a vowel, should not do anything" do
+          it "'meny'" do
+            # TODO: Find a real indonesian word for this case
+            should_transform(:remove_first_order_prefix, 'xxxmenyaxx', 'xxxmenyaxx')
+            should_transform(:remove_first_order_prefix, 'xxxmenya', 'xxxmenya')
+          end
+
+          it "'peny'" do
+            # TODO: Find a real indonesian word for this case
+            should_transform(:remove_first_order_prefix, 'xxxpenyaxx', 'xxxpenyaxx')
+            should_transform(:remove_first_order_prefix, 'xxxpenya', 'xxxpenya')
+          end
+
+          it "'pen'" do
+            # TODO: Find a real indonesian word for this case
+            should_transform(:remove_first_order_prefix, 'xxxpenexx', 'xxxpenexx')
+            should_transform(:remove_first_order_prefix, 'xxxpeno', 'xxxpeno')
+          end
+        end
+
+        describe "followed by consonant, should not do anything" do
+          it "'meny'" do
+            # TODO: Find a real indonesian word for this case
+            should_transform(:remove_first_order_prefix, 'xxxmenykxx', 'xxxmenykxx')
+            should_transform(:remove_first_order_prefix, 'xxxmenyk', 'xxxmenyk')
+          end
+
+          it "'peny'" do
+            # TODO: Find a real indonesian word for this case
+            should_transform(:remove_first_order_prefix, 'xxxpenykxx', 'xxxpenykxx')
+            should_transform(:remove_first_order_prefix, 'xxxpenyk', 'xxxpenyk')
+          end
+
+          it "'pen'" do
+            # TODO: Find a real indonesian word for this case
+            should_transform(:remove_first_order_prefix, 'xxxpenrxx', 'xxxpenrxx')
+            should_transform(:remove_first_order_prefix, 'xxxpenr', 'xxxpenr')
+          end
+        end
+      end
+    end
+  end
 end
 
 def should_transform(method_name, word, transformed_word)
