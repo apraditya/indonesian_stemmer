@@ -58,16 +58,10 @@ module IndonesianStemmer
         if starts_with?(word, word_size, characters) && word_size > characters_size && is_vowel?(word[characters_size])
           @flags ||= collection_for(characters, 'removed')
           @number_of_syllables -= 1
-
-          substitute_char = case
-          when %w(meny peny).include?(characters)
-            's'
-          when characters == 'pen'
-            't'
-          end
-          word[characters_size-1] = substitute_char if substitute_char
-
-          slice_word_with_characters(word, characters[0..(characters_size-2)], :start)
+          word = substitute_word_character(word, characters)
+          slice_word_with_characters( word,
+                                      characters[0..(characters_size-2)],
+                                      :start )
           return word
         end
       end
@@ -116,6 +110,17 @@ module IndonesianStemmer
         chars_length = characters.size
         multiplier = (position == :start)? 0 : -1
         word.slice!( multiplier*chars_length, chars_length)
+      end
+
+      def substitute_word_character(word, characters)
+        substitute_char = case
+        when %w(meny peny).include?(characters)
+          's'
+        when characters == 'pen'
+          't'
+        end
+        word[characters.size-1] = substitute_char if substitute_char
+        word
       end
   end
 end
