@@ -157,6 +157,93 @@ describe IndonesianStemmer do
         end
       end
     end
+
+    describe "words with first order prefix characters" do
+      describe "at the begining, should remove these characters" do
+        it "'meng'" do
+          should_transform(:remove_first_order_prefix, 'menggambar', 'gambar')
+        end
+
+        it "'men'" do
+          should_transform(:remove_first_order_prefix, 'mendaftar', 'daftar')
+        end
+
+        it "'mem'" do
+          should_transform(:remove_first_order_prefix, 'membangun', 'bangun')
+        end
+
+        it "'me'" do
+          should_transform(:remove_first_order_prefix, 'melukis', 'lukis')
+        end
+
+        it "'peng'" do
+          should_transform(:remove_first_order_prefix, 'penggaris', 'garis')
+        end
+
+        it "'pem'" do
+          should_transform(:remove_first_order_prefix, 'pembajak', 'bajak')
+        end
+
+        it "'di'" do
+          should_transform(:remove_first_order_prefix, 'disayang', 'sayang')
+        end
+
+        it "'ter'" do
+          should_transform(:remove_first_order_prefix, 'terucap', 'ucap')
+        end
+
+        it "'ke'" do
+          should_transform(:remove_first_order_prefix, 'kemakan', 'makan')
+        end
+      end
+
+      describe "at the rest part of the word, should not remove these characters" do
+        it "'meng'" do
+          should_transform(:remove_first_order_prefix, 'xxxmengxex', 'xxxmengxex')
+          should_transform(:remove_first_order_prefix, 'xexmeng', 'xexmeng')
+        end
+
+        it "'men'" do
+          should_transform(:remove_first_order_prefix, 'xxxmenxxx', 'xxxmenxxx')
+          should_transform(:remove_first_order_prefix, 'xxxmen', 'xxxmen')
+        end
+
+        it "'mem'" do
+          should_transform(:remove_first_order_prefix, 'xxxmemxxx', 'xxxmemxxx')
+          should_transform(:remove_first_order_prefix, 'xxxmem', 'xxxmem')
+        end
+
+        it "'me'" do
+          should_transform(:remove_first_order_prefix, 'xxxmexxx', 'xxxmexxx')
+          should_transform(:remove_first_order_prefix, 'xxxme', 'xxxme')
+        end
+
+        it "'peng'" do
+          should_transform(:remove_first_order_prefix, 'xxxpengxxx', 'xxxpengxxx')
+          should_transform(:remove_first_order_prefix, 'xxxpeng', 'xxxpeng')
+        end
+
+        it "'pem'" do
+          should_transform(:remove_first_order_prefix, 'xxxpemxxx', 'xxxpemxxx')
+          should_transform(:remove_first_order_prefix, 'xxxpem', 'xxxpem')
+        end
+
+        it "'di'" do
+          should_transform(:remove_first_order_prefix, 'xxxdixxx', 'xxxdixxx')
+          should_transform(:remove_first_order_prefix, 'xxxdi', 'xxxdi')
+        end
+
+        it "'ter'" do
+          should_transform(:remove_first_order_prefix, 'xxxterxxx', 'xxxterxxx')
+          should_transform(:remove_first_order_prefix, 'xxxter', 'xxxter')
+        end
+
+        it "'ke'" do
+          should_transform(:remove_first_order_prefix, 'xxxkexxx', 'xxxkexxx')
+          should_transform(:remove_first_order_prefix, 'xxxke', 'xxxke')
+        end
+      end
+    end
   end
 end
 
