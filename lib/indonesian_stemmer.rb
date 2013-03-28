@@ -2,12 +2,16 @@ require "indonesian_stemmer/version"
 require "lucene_analysis/stemmer_utility"
 
 module IndonesianStemmer
-  VOWEL_CHARACTERS              = %w( a e i o u )
-  PARTICLE_CHARACTERS           = %w( kah lah pun )
-  POSSESSIVE_PRONOUN_CHARACTERS = %w( ku mu nya )
-  FIRST_ORDER_PREFIX_CHARACTERS = %w( meng meny men mem me peng peny pen pem di ter ke )
-
-  SPECIAL_FIRST_ORDER_PREFIX_CHARACTERS = %w( meny peny pen )
+  VOWEL_CHARACTERS                            = %w( a e i o u )
+  PARTICLE_CHARACTERS                         = %w( kah lah pun )
+  POSSESSIVE_PRONOUN_CHARACTERS               = %w( ku mu nya )
+  FIRST_ORDER_PREFIX_CHARACTERS               = %w( meng meny men mem me
+                                                    peng peny pen pem di ter ke )
+  SPECIAL_FIRST_ORDER_PREFIX_CHARACTERS       = %w( meny peny pen )
+  SECOND_ORDER_PREFIX_CHARACTERS              = %w( ber be per pe )
+  SPECIAL_SECOND_ORDER_PREFIX_CHARACTERS      = %w( be )
+  NON_SPECIAL_SECOND_ORDER_PREFIX_CHARACTERS  = %w( ber per pe )
+  SPECIAL_SECOND_ORDER_PREFIX_WORDS           = %w( belajar pelajar belunjur )
 
   REMOVED_KE    = 1
   REMOVED_PENG  = 2
@@ -57,7 +61,7 @@ module IndonesianStemmer
         characters_size = characters.size
         if starts_with?(word, word_size, characters) && word_size > characters_size && is_vowel?(word[characters_size])
           @flags ||= collection_for(characters, 'removed')
-          @number_of_syllables -= 1
+          reduce_syllable
           word = substitute_word_character(word, characters)
           slice_word_at_position( word,
                                   characters_size-1,
@@ -69,6 +73,29 @@ module IndonesianStemmer
       remove_characters_matching_collection( word,
                                             collection_for(:first_order_prefix),
                                             :start )
+    end
+
+    def remove_second_order_prefix(word)
+      @number_of_syllables ||= total_syllables(word)
+      word_size = word.size
+
+      if SPECIAL_SECOND_ORDER_PREFIX_WORDS.include?(word)
+        @flags ||= REMOVED_BER if word[0..1] == 'be'
+        reduce_syllable
+        slice_word_at_position(word, 3, :start)
+        return word
+      end
+
+      if starts_with?(word, word_size, 'be') && word_size > 4 && !is_vowel?(word[2]) && word[3..4] == 'er'
+        @flags ||= collection_for('ber', 'removed')
+        reduce_syllable
+        slice_word_at_position(word, 2, :start)
+        return word
+      end
+
+      remove_characters_matching_collection(word,
+                                            collection_for(:non_special_second_order_prefix),
+                                            :start)
     end
 
 
@@ -97,7 +124,7 @@ module IndonesianStemmer
       def remove_characters_matching_collection(word, collection, position)
         collection.each do |characters|
           if send("#{position}s_with?", word, word.size, characters)
-            @number_of_syllables -= 1
+            reduce_syllable
             slice_word_at_position(word, characters.size, position)
             return word
           end
@@ -120,6 +147,10 @@ module IndonesianStemmer
         end
         word[characters.size-1] = substitute_char if substitute_char
         word
+      end
+
+      def reduce_syllable
+        @number_of_syllables -= 1
       end
   end
 end

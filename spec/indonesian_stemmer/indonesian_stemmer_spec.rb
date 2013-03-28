@@ -265,6 +265,70 @@ describe IndonesianStemmer do
       end
     end
   end
+
+  describe '#remove_second_order_prefix' do
+    describe "should handle these irregular words" do
+      it "'belajar'" do
+        should_transform(:remove_second_order_prefix, 'belajar', 'ajar')
+      end
+
+      it "'belunjur'" do
+        should_transform(:remove_second_order_prefix, 'belunjur', 'unjur')
+      end
+
+      it "'pelajar'" do
+        should_transform(:remove_second_order_prefix, 'pelajar', 'ajar')
+      end
+    end
+
+    describe "should handle words starting with 'be*er' where * isn't a vowel & the length > 4" do
+      it "'beserta'" do
+        should_transform(:remove_second_order_prefix, 'beserta', 'serta')
+      end
+      # TODO: Find other word(s) matching this rule
+    end
+
+    describe "words with second order prefix characters" do
+      describe "at the begining," do
+        describe "should remove these characters" do
+          it "'ber'" do
+            should_transform(:remove_second_order_prefix, 'bercerita', 'cerita')
+          end
+
+          it "'per'" do
+            should_transform(:remove_second_order_prefix, 'perjelas', 'jelas')
+          end
+
+          it "'pe'" do
+            should_transform(:remove_second_order_prefix, 'pesuruh', 'suruh')
+          end
+        end
+
+        describe "should set the flags correctly" do
+          it "'ber'"
+          it "'per'"
+          it "'pe'"
+        end
+      end
+
+      describe "at the rest part of the word, should not remove these characters" do
+        it "'ber'" do
+          should_not_transform(:remove_second_order_prefix, 'xxxberxxx')
+          should_not_transform(:remove_second_order_prefix, 'xxxber')
+        end
+
+        it "'per'" do
+          should_not_transform(:remove_second_order_prefix, 'xxxperxxx')
+          should_not_transform(:remove_second_order_prefix, 'xxxper')
+        end
+
+        it "'pe'" do
+          should_not_transform(:remove_second_order_prefix, 'xxxpexxx')
+          should_not_transform(:remove_second_order_prefix, 'xxxpe')
+        end
+      end
+    end
+  end
 end
 
 def should_transform(method_name, word, transformed_word)
