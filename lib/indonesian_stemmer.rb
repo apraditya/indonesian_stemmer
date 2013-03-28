@@ -12,6 +12,7 @@ module IndonesianStemmer
   SPECIAL_SECOND_ORDER_PREFIX_CHARACTERS      = %w( be )
   NON_SPECIAL_SECOND_ORDER_PREFIX_CHARACTERS  = %w( ber per pe )
   SPECIAL_SECOND_ORDER_PREFIX_WORDS           = %w( belajar pelajar belunjur )
+  SUFFIX_CHARACTERS                           = %w( kan an i )
 
   REMOVED_KE    = 1
   REMOVED_PENG  = 2
@@ -96,6 +97,31 @@ module IndonesianStemmer
       remove_characters_matching_collection(word,
                                             collection_for(:non_special_second_order_prefix),
                                             :start)
+    end
+
+    def remove_suffix(word)
+      @number_of_syllables ||= total_syllables(word)
+
+      SUFFIX_CHARACTERS.each do |character|
+        # remove_characters_matching_suffix(word, character)
+        constants_to_check = case character
+        when 'kan'
+          [REMOVED_KE, REMOVED_PENG, REMOVED_PE]
+        when 'an'
+          [REMOVED_DI, REMOVED_MENG, REMOVED_TER]
+        when 'i'
+          [REMOVED_BER, REMOVED_KE, REMOVED_PENG]
+        end
+
+        if ends_with?(word, word.size, character) &&
+              constants_to_check.all? { |c| (@flags & c) == 0 }
+          reduce_syllable
+          slice_word_at_position(word, character.size, :end)
+          return word
+        end
+      end
+
+      word
     end
 
 

@@ -329,6 +329,42 @@ describe IndonesianStemmer do
       end
     end
   end
+
+  describe '#remove_suffix' do
+    describe "words with these suffix characters" do
+      describe "at the end of the word, should remove the suffix characters" do
+        it "'kan'" do
+          should_transform(:remove_suffix, 'katakan', 'kata')
+        end
+
+        it "'an'" do
+          pending 'skip this for now'
+          should_transform(:remove_suffix, 'sandaran', 'sandar')
+        end
+
+        it "'i'" do
+          should_transform(:remove_suffix, 'tiduri', 'tidur')
+        end
+      end
+
+      describe 'at the rest part of the word, should not remove the characters' do
+        it "'kan'" do
+          should_not_transform(:remove_suffix, 'kanxxx')
+          should_not_transform(:remove_suffix, 'xxxkanxxx')
+        end
+
+        it "'an'" do
+          should_not_transform(:remove_suffix, 'anxxx')
+          should_not_transform(:remove_suffix, 'xxxanxxx')
+        end
+
+        it "'i'" do
+          should_not_transform(:remove_suffix, 'ixxx')
+          should_not_transform(:remove_suffix, 'xxxixxx')
+        end
+      end
+    end
+  end
 end
 
 def should_transform(method_name, word, transformed_word)
