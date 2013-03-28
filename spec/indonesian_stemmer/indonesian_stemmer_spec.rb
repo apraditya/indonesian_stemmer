@@ -113,6 +113,12 @@ describe IndonesianStemmer do
             should_transform(:remove_first_order_prefix, 'penjahat', 'jahat')
           end
         end
+
+        describe "should set the flags correctly" do
+          it "'meny'"
+          it "'peny'"
+          it "'pen'"
+        end
       end
 
       describe "at the rest part of the word" do
@@ -159,41 +165,55 @@ describe IndonesianStemmer do
     end
 
     describe "words with first order prefix characters" do
-      describe "at the begining, should remove these characters" do
-        it "'meng'" do
-          should_transform(:remove_first_order_prefix, 'menggambar', 'gambar')
+      describe "at the begining," do
+        describe "should remove these characters" do
+          it "'meng'" do
+            should_transform(:remove_first_order_prefix, 'menggambar', 'gambar')
+          end
+
+          it "'men'" do
+            should_transform(:remove_first_order_prefix, 'mendaftar', 'daftar')
+          end
+
+          it "'mem'" do
+            should_transform(:remove_first_order_prefix, 'membangun', 'bangun')
+          end
+
+          it "'me'" do
+            should_transform(:remove_first_order_prefix, 'melukis', 'lukis')
+          end
+
+          it "'peng'" do
+            should_transform(:remove_first_order_prefix, 'penggaris', 'garis')
+          end
+
+          it "'pem'" do
+            should_transform(:remove_first_order_prefix, 'pembajak', 'bajak')
+          end
+
+          it "'di'" do
+            should_transform(:remove_first_order_prefix, 'disayang', 'sayang')
+          end
+
+          it "'ter'" do
+            should_transform(:remove_first_order_prefix, 'terucap', 'ucap')
+          end
+
+          it "'ke'" do
+            should_transform(:remove_first_order_prefix, 'kemakan', 'makan')
+          end
         end
 
-        it "'men'" do
-          should_transform(:remove_first_order_prefix, 'mendaftar', 'daftar')
-        end
-
-        it "'mem'" do
-          should_transform(:remove_first_order_prefix, 'membangun', 'bangun')
-        end
-
-        it "'me'" do
-          should_transform(:remove_first_order_prefix, 'melukis', 'lukis')
-        end
-
-        it "'peng'" do
-          should_transform(:remove_first_order_prefix, 'penggaris', 'garis')
-        end
-
-        it "'pem'" do
-          should_transform(:remove_first_order_prefix, 'pembajak', 'bajak')
-        end
-
-        it "'di'" do
-          should_transform(:remove_first_order_prefix, 'disayang', 'sayang')
-        end
-
-        it "'ter'" do
-          should_transform(:remove_first_order_prefix, 'terucap', 'ucap')
-        end
-
-        it "'ke'" do
-          should_transform(:remove_first_order_prefix, 'kemakan', 'makan')
+        describe "should set the flags correctly" do
+          it "'meng'"
+          it "'men'"
+          it "'mem'"
+          it "'me'"
+          it "'peng'"
+          it "'pem'"
+          it "'di'"
+          it "'ter'"
+          it "'ke'"
         end
       end
 
