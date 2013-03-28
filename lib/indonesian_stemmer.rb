@@ -59,9 +59,9 @@ module IndonesianStemmer
           @flags ||= collection_for(characters, 'removed')
           @number_of_syllables -= 1
           word = substitute_word_character(word, characters)
-          slice_word_with_characters( word,
-                                      characters[0..(characters_size-2)],
-                                      :start )
+          slice_word_at_position( word,
+                                  characters_size-1,
+                                  :start )
           return word
         end
       end
@@ -98,7 +98,7 @@ module IndonesianStemmer
         collection.each do |characters|
           if send("#{position}s_with?", word, word.size, characters)
             @number_of_syllables -= 1
-            slice_word_with_characters(word, characters, position)
+            slice_word_at_position(word, characters.size, position)
             return word
           end
         end
@@ -106,10 +106,9 @@ module IndonesianStemmer
         word
       end
 
-      def slice_word_with_characters(word, characters, position)
-        chars_length = characters.size
+      def slice_word_at_position(word, characters_size, position)
         multiplier = (position == :start)? 0 : -1
-        word.slice!( multiplier*chars_length, chars_length)
+        word.slice!( multiplier*characters_size, characters_size)
       end
 
       def substitute_word_character(word, characters)
