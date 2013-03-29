@@ -345,75 +345,165 @@ describe IndonesianStemmer do
         end
       end
 
-      describe "at the rest part of the word, should not remove these characters" do
-        it "'meng'" do
-          should_transform(:remove_first_order_prefix, 'xxxmengxex', 'xxxmengxex')
-          should_transform(:remove_first_order_prefix, 'xexmeng', 'xexmeng')
+      describe "at the rest part of the word," do
+        describe "should not remove these characters" do
+          it "'meng'" do
+            should_transform(:remove_first_order_prefix, 'xxxmengxex', 'xxxmengxex')
+            should_transform(:remove_first_order_prefix, 'xexmeng', 'xexmeng')
+          end
+
+          it "'men'" do
+            should_transform(:remove_first_order_prefix, 'xxxmenxxx', 'xxxmenxxx')
+            should_transform(:remove_first_order_prefix, 'xxxmen', 'xxxmen')
+          end
+
+          it "'mem'" do
+            should_transform(:remove_first_order_prefix, 'xxxmemxxx', 'xxxmemxxx')
+            should_transform(:remove_first_order_prefix, 'xxxmem', 'xxxmem')
+          end
+
+          it "'me'" do
+            should_transform(:remove_first_order_prefix, 'xxxmexxx', 'xxxmexxx')
+            should_transform(:remove_first_order_prefix, 'xxxme', 'xxxme')
+          end
+
+          it "'peng'" do
+            should_transform(:remove_first_order_prefix, 'xxxpengxxx', 'xxxpengxxx')
+            should_transform(:remove_first_order_prefix, 'xxxpeng', 'xxxpeng')
+          end
+
+          it "'pem'" do
+            should_transform(:remove_first_order_prefix, 'xxxpemxxx', 'xxxpemxxx')
+            should_transform(:remove_first_order_prefix, 'xxxpem', 'xxxpem')
+          end
+
+          it "'di'" do
+            should_transform(:remove_first_order_prefix, 'xxxdixxx', 'xxxdixxx')
+            should_transform(:remove_first_order_prefix, 'xxxdi', 'xxxdi')
+          end
+
+          it "'ter'" do
+            should_transform(:remove_first_order_prefix, 'xxxterxxx', 'xxxterxxx')
+            should_transform(:remove_first_order_prefix, 'xxxter', 'xxxter')
+          end
+
+          it "'ke'" do
+            should_transform(:remove_first_order_prefix, 'xxxkexxx', 'xxxkexxx')
+            should_transform(:remove_first_order_prefix, 'xxxke', 'xxxke')
+          end
         end
 
-        it "'men'" do
-          should_transform(:remove_first_order_prefix, 'xxxmenxxx', 'xxxmenxxx')
-          should_transform(:remove_first_order_prefix, 'xxxmen', 'xxxmen')
-        end
+        describe "should not set any flags" do
+          it "'meng'" do
+            should_not_set_flags :remove_first_order_prefix, 'xxxmengxex'
+            should_not_set_flags :remove_first_order_prefix, 'xexmeng'
+          end
 
-        it "'mem'" do
-          should_transform(:remove_first_order_prefix, 'xxxmemxxx', 'xxxmemxxx')
-          should_transform(:remove_first_order_prefix, 'xxxmem', 'xxxmem')
-        end
+          it "'men'" do
+            should_not_set_flags :remove_first_order_prefix, 'xxxmenxxx'
+            should_not_set_flags :remove_first_order_prefix, 'xxxmen'
+          end
 
-        it "'me'" do
-          should_transform(:remove_first_order_prefix, 'xxxmexxx', 'xxxmexxx')
-          should_transform(:remove_first_order_prefix, 'xxxme', 'xxxme')
-        end
+          it "'mem'" do
+            should_not_set_flags :remove_first_order_prefix, 'xxxmemxxx'
+            should_not_set_flags :remove_first_order_prefix, 'xxxmem'
+          end
 
-        it "'peng'" do
-          should_transform(:remove_first_order_prefix, 'xxxpengxxx', 'xxxpengxxx')
-          should_transform(:remove_first_order_prefix, 'xxxpeng', 'xxxpeng')
-        end
+          it "'me'" do
+            should_not_set_flags :remove_first_order_prefix, 'xxxmexxx'
+            should_not_set_flags :remove_first_order_prefix, 'xxxme'
+          end
 
-        it "'pem'" do
-          should_transform(:remove_first_order_prefix, 'xxxpemxxx', 'xxxpemxxx')
-          should_transform(:remove_first_order_prefix, 'xxxpem', 'xxxpem')
-        end
+          it "'peng'" do
+            should_not_set_flags :remove_first_order_prefix, 'xxxpengxxx'
+            should_not_set_flags :remove_first_order_prefix, 'xxxpeng'
+          end
 
-        it "'di'" do
-          should_transform(:remove_first_order_prefix, 'xxxdixxx', 'xxxdixxx')
-          should_transform(:remove_first_order_prefix, 'xxxdi', 'xxxdi')
-        end
+          it "'pem'" do
+            should_not_set_flags :remove_first_order_prefix, 'xxxpemxxx'
+            should_not_set_flags :remove_first_order_prefix, 'xxxpem'
+          end
 
-        it "'ter'" do
-          should_transform(:remove_first_order_prefix, 'xxxterxxx', 'xxxterxxx')
-          should_transform(:remove_first_order_prefix, 'xxxter', 'xxxter')
-        end
+          it "'di'" do
+            should_not_set_flags :remove_first_order_prefix, 'xxxdixxx'
+            should_not_set_flags :remove_first_order_prefix, 'xxxdi'
+          end
 
-        it "'ke'" do
-          should_transform(:remove_first_order_prefix, 'xxxkexxx', 'xxxkexxx')
-          should_transform(:remove_first_order_prefix, 'xxxke', 'xxxke')
+          it "'ter'" do
+            should_not_set_flags :remove_first_order_prefix, 'xxxterxxx'
+            should_not_set_flags :remove_first_order_prefix, 'xxxter'
+          end
+
+          it "'ke'" do
+            should_not_set_flags :remove_first_order_prefix, 'xxxkexxx'
+            should_not_set_flags :remove_first_order_prefix, 'xxxke'
+          end
         end
       end
     end
   end
 
   describe '#remove_second_order_prefix' do
-    describe "should handle these irregular words" do
-      it "'belajar'" do
-        should_transform(:remove_second_order_prefix, 'belajar', 'ajar')
+    describe "regarding these irregular words" do
+      describe "'belajar'" do
+        before do
+          @word = 'belajar'
+        end
+
+        it 'should be handled correctly' do
+          should_transform :remove_second_order_prefix, @word, 'ajar'
+        end
+
+        it 'should not set any flags' do
+          should_not_set_flags :remove_second_order_prefix, @word
+        end
       end
 
-      it "'belunjur'" do
-        should_transform(:remove_second_order_prefix, 'belunjur', 'unjur')
+      describe "'belunjur'" do
+        before do
+          @word = 'belunjur'
+        end
+
+        it 'should be handled correctly' do
+          should_transform(:remove_second_order_prefix, @word, 'unjur')
+        end
+
+        it 'should not set any flags' do
+          should_not_set_flags :remove_second_order_prefix, @word
+        end
       end
 
-      it "'pelajar'" do
-        should_transform(:remove_second_order_prefix, 'pelajar', 'ajar')
+      describe "'pelajar'" do
+        before do
+          @word = 'pelajar'
+        end
+
+        it 'should be handled correctly' do
+          should_transform(:remove_second_order_prefix, @word, 'ajar')
+        end
+
+        it 'should not set any flags' do
+          should_not_set_flags :remove_second_order_prefix, @word
+        end
       end
     end
 
-    describe "should handle words starting with 'be*er' where * isn't a vowel & the length > 4" do
-      it "'beserta'" do
-        should_transform(:remove_second_order_prefix, 'beserta', 'serta')
-      end
+    describe "regarding words starting with 'be*er' where * isn't a vowel & the length > 4" do
       # TODO: Find other word(s) matching this rule
+      describe "'beserta'" do
+        before do
+          @word = 'beserta'
+          unset_flags
+        end
+
+        it "should be handled correctly" do
+          should_transform :remove_second_order_prefix, @word, 'serta'
+        end
+
+        it "should set the flags to REMOVED_BER" do
+          should_set_flags_to :remove_second_order_prefix, @word, 'REMOVED_BER'
+        end
+      end
     end
 
     describe "words with second order prefix characters" do
@@ -433,26 +523,57 @@ describe IndonesianStemmer do
         end
 
         describe "should set the flags correctly" do
-          it "'ber'"
-          it "'per'"
-          it "'pe'"
+          before do
+            unset_flags
+          end
+
+          it "'ber' should set to REMOVED_" do
+            should_set_flags_to :remove_second_order_prefix, 'bercerita', 'REMOVED_BER'
+          end
+
+          it "'per' should not set any flags" do
+            should_not_set_flags :remove_second_order_prefix, 'perjelas'
+          end
+
+          it "'pe' should set to REMOVED_" do
+            should_set_flags_to :remove_second_order_prefix, 'pesuruh', 'REMOVED_PE'
+          end
         end
       end
 
-      describe "at the rest part of the word, should not remove these characters" do
-        it "'ber'" do
-          should_not_transform(:remove_second_order_prefix, 'xxxberxxx')
-          should_not_transform(:remove_second_order_prefix, 'xxxber')
+      describe "at the rest part of the word," do
+        describe "should not remove these characters" do
+          it "'ber'" do
+            should_not_transform(:remove_second_order_prefix, 'xxxberxxx')
+            should_not_transform(:remove_second_order_prefix, 'xxxber')
+          end
+
+          it "'per'" do
+            should_not_transform(:remove_second_order_prefix, 'xxxperxxx')
+            should_not_transform(:remove_second_order_prefix, 'xxxper')
+          end
+
+          it "'pe'" do
+            should_not_transform(:remove_second_order_prefix, 'xxxpexxx')
+            should_not_transform(:remove_second_order_prefix, 'xxxpe')
+          end
         end
 
-        it "'per'" do
-          should_not_transform(:remove_second_order_prefix, 'xxxperxxx')
-          should_not_transform(:remove_second_order_prefix, 'xxxper')
-        end
+        describe "should not set any tags" do
+          it "'ber'" do
+            should_not_set_flags :remove_second_order_prefix, 'xxxberxxx'
+            should_not_set_flags :remove_second_order_prefix, 'xxxber'
+          end
 
-        it "'pe'" do
-          should_not_transform(:remove_second_order_prefix, 'xxxpexxx')
-          should_not_transform(:remove_second_order_prefix, 'xxxpe')
+          it "'per'" do
+            should_not_set_flags :remove_second_order_prefix, 'xxxperxxx'
+            should_not_set_flags :remove_second_order_prefix, 'xxxper'
+          end
+
+          it "'pe'" do
+            should_not_set_flags :remove_second_order_prefix, 'xxxpexxx'
+            should_not_set_flags :remove_second_order_prefix, 'xxxpe'
+          end
         end
       end
     end
@@ -466,7 +587,6 @@ describe IndonesianStemmer do
         end
 
         it "'an'" do
-          pending 'skip this for now'
           should_transform(:remove_suffix, 'sandaran', 'sandar')
         end
 
@@ -489,6 +609,20 @@ describe IndonesianStemmer do
         it "'i'" do
           should_not_transform(:remove_suffix, 'ixxx')
           should_not_transform(:remove_suffix, 'xxxixxx')
+        end
+      end
+
+      describe "should not set any flags, regardless the characters position" do
+        it "'kan'" do
+          should_not_set_flags :remove_suffix, 'katakan'
+        end
+
+        it "'an'" do
+          should_not_set_flags :remove_suffix, 'sandaran'
+        end
+
+        it "'i'" do
+          should_not_set_flags :remove_suffix, 'tiduri'
         end
       end
     end
