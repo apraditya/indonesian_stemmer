@@ -11,7 +11,7 @@ gemspec
 group :development do
   gem 'guard'
   gem 'guard-rspec'
-  gem 'pry'
+  gem 'pry', require: true
   gem 'pry-debugger'
 
   if RbConfig::CONFIG['host_os'] =~ /darwin/
