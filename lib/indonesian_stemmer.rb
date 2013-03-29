@@ -145,11 +145,13 @@ module IndonesianStemmer
           "#{type}_#{name}"
         end
         const_get("#{constant_name}".upcase.to_sym)
+      rescue NameError
       end
 
       def remove_characters_matching_collection(word, collection, position)
         collection.each do |characters|
           if send("#{position}s_with?", word, word.size, characters)
+            @flags ||= collection_for(characters, 'removed')
             reduce_syllable
             slice_word_at_position(word, characters.size, position)
             return word

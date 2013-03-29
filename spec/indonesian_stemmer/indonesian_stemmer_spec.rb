@@ -46,6 +46,26 @@ describe IndonesianStemmer do
         should_not_transform(:remove_particle, 'kepunyaan')
       end
     end
+
+    describe 'should not set any flags regardless the character position' do
+      it "'kah'" do
+        should_not_set_flags :remove_particle, 'manakah'
+        should_not_set_flags :remove_particle, 'kahak'
+        should_not_set_flags :remove_particle, 'pernikahan'
+      end
+
+      it "'lah'" do
+        should_not_set_flags :remove_particle, 'kembalilah'
+        should_not_set_flags :remove_particle, 'lahiriah'
+        should_not_set_flags :remove_particle, 'kelahiran'
+      end
+
+      it "'pun'" do
+        should_not_set_flags :remove_particle, 'bagaimanapun'
+        should_not_set_flags :remove_particle, 'punya'
+        should_not_set_flags :remove_particle, 'kepunyaan'
+      end
+    end
   end
 
   describe '#remove_possessive_pronoun' do
@@ -77,6 +97,26 @@ describe IndonesianStemmer do
       it "'nya'" do
         should_not_transform(:remove_possessive_pronoun, 'nyapu')
         should_not_transform(:remove_possessive_pronoun, 'menyambung')
+      end
+    end
+
+    describe 'should not set any flags regardless the characters position' do
+      it 'ku' do
+        should_not_set_flags :remove_possessive_pronoun, 'mainanku'
+        should_not_set_flags :remove_possessive_pronoun, 'kumakan'
+        should_not_set_flags :remove_possessive_pronoun, 'kekurangan'
+      end
+
+      it 'mu' do
+        should_not_set_flags :remove_possessive_pronoun, 'mobilmu'
+        should_not_set_flags :remove_possessive_pronoun, 'murahan'
+        should_not_set_flags :remove_possessive_pronoun, 'kemurkaan'
+      end
+
+      it 'nya' do
+        should_not_set_flags :remove_possessive_pronoun, 'gelasnya'
+        should_not_set_flags :remove_possessive_pronoun, 'nyapu'
+        should_not_set_flags :remove_possessive_pronoun, 'menyambung'
       end
     end
   end
@@ -114,10 +154,31 @@ describe IndonesianStemmer do
           end
         end
 
-        describe "should set the flags correctly" do
-          it "'meny'"
-          it "'peny'"
-          it "'pen'"
+        describe "should set the flags correctly regardless vowel or consonant" do
+          before do
+            unset_flags
+          end
+
+          it "'meny' should set the flags to REMOVED_MENG" do
+            constant = 'REMOVED_MENG'
+            should_set_flags_to :remove_first_order_prefix, 'menyambung', constant
+            unset_flags
+            should_set_flags_to :remove_first_order_prefix, 'menyxxx', constant
+          end
+
+          it "'peny' should set the flags to REMOVED_PENG" do
+            constant = 'REMOVED_PENG'
+            should_set_flags_to :remove_first_order_prefix, 'penyantap', constant
+            unset_flags
+            should_set_flags_to :remove_first_order_prefix, 'penyxxx', constant
+          end
+
+          it "'pen' should set the flags to REMOVED_PENG" do
+            constant = 'REMOVED_PENG'
+            should_set_flags_to :remove_first_order_prefix, 'penata', constant
+            unset_flags
+            should_set_flags_to :remove_first_order_prefix, 'penjahat', constant
+          end
         end
       end
 
@@ -159,6 +220,29 @@ describe IndonesianStemmer do
             # TODO: Find a real indonesian word for this case
             should_transform(:remove_first_order_prefix, 'xxxpenrxx', 'xxxpenrxx')
             should_transform(:remove_first_order_prefix, 'xxxpenr', 'xxxpenr')
+          end
+        end
+
+        describe "should not set any flags regardless the characters position" do
+          it "'meny'" do
+            # TODO: Find a real indonesian word for this case
+            %w( xxxmenyaxx xxxmenya xxxmenykxx xxxmenyk ).each do |character|
+              should_not_set_flags :remove_first_order_prefix, character
+            end
+          end
+
+          it "'peny'" do
+            # TODO: Find a real indonesian word for this case
+            %w( xxxpenyaxx xxxpenya xxxpenykxx xxxpenyk ).each do |character|
+              should_not_set_flags :remove_first_order_prefix, character
+            end
+          end
+
+          it "'pen'" do
+            # TODO: Find a real indonesian word for this case
+            %w( xxxpenexx xxxpeno xxxpenrxx xxxpenr ).each do |character|
+              should_not_set_flags :remove_first_order_prefix, character
+            end
           end
         end
       end
@@ -205,15 +289,59 @@ describe IndonesianStemmer do
         end
 
         describe "should set the flags correctly" do
-          it "'meng'"
-          it "'men'"
-          it "'mem'"
-          it "'me'"
-          it "'peng'"
-          it "'pem'"
-          it "'di'"
-          it "'ter'"
-          it "'ke'"
+          before do
+            unset_flags
+          end
+
+          describe "to REMOVED_MENG on these characters" do
+            before do
+              @constant = 'REMOVED_MENG'
+            end
+
+            it "'meng'" do
+              should_set_flags_to :remove_first_order_prefix, 'menggambar', @constant
+            end
+
+            it "'men'" do
+              should_set_flags_to :remove_first_order_prefix, 'mendaftar', @constant
+            end
+
+            it "'mem'" do
+              should_set_flags_to :remove_first_order_prefix, 'membangun', @constant
+            end
+
+            it "'me'" do
+              should_set_flags_to :remove_first_order_prefix, 'melukis', @constant
+            end
+          end
+
+          describe "to REMOVED_PENG on these characters" do
+            before do
+              @constant = 'REMOVED_PENG'
+            end
+
+            it "'peng'" do
+              should_set_flags_to :remove_first_order_prefix, 'penggaris', @constant
+            end
+
+            it "'pem'" do
+              should_set_flags_to :remove_first_order_prefix, 'pembajak', @constant
+            end
+          end
+
+          describe "to their respective constants on these characters" do
+            it "'di'" do
+              should_set_flags_to :remove_first_order_prefix, 'disayang', 'REMOVED_DI'
+            end
+
+            it "'ter'" do
+              should_set_flags_to :remove_first_order_prefix, 'terucap', 'REMOVED_TER'
+            end
+
+            it "'ke'" do
+              should_set_flags_to :remove_first_order_prefix, 'kemakan', 'REMOVED_KE'
+            end
+          end
         end
       end
 
