@@ -1,10 +1,9 @@
 require 'spec_helper'
-require 'lucene_analysis/stemmer_utility'
 
-describe LuceneAnalysis::StemmerUtility do
+describe IndonesianStemmer::StemmerUtility do
   before do
     class AClass
-      include LuceneAnalysis::StemmerUtility
+      include IndonesianStemmer::StemmerUtility
     end
     @an_object = AClass.new
     @word = 'asldkamsdo'

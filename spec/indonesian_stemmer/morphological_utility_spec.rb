@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe IndonesianStemmer do
+describe IndonesianStemmer::MorphologicalUtility do
   describe '#total_syllables' do
     it "'memasak' should return 3" do
       IndonesianStemmer.total_syllables('memasak').should == 3

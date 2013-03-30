@@ -1,4 +1,4 @@
-module LuceneAnalysis
+module IndonesianStemmer
   module StemmerUtility
 
     def self.included(receiver)
