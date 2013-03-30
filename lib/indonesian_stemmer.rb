@@ -43,3 +43,9 @@ module IndonesianStemmer
       end
   end
 end
+
+class String
+  def stem
+    IndonesianStemmer.stem(self)
+  end
+end

@@ -1,7 +1,7 @@
 require 'indonesian_stemmer'
 
 def should_stem(word, expected_word)
-  should_transform :stem, word, expected_word
+  word.stem.should == expected_word
 end
 
 def should_transform(method_name, word, transformed_word)
