@@ -8,9 +8,9 @@ Gem::Specification.new do |gem|
   gem.version       = IndonesianStemmer::VERSION
   gem.authors       = ["Adinda Praditya"]
   gem.email         = ["apraditya@gmail.com"]
-  gem.description   = %q{A ruby port to Apache Lucene Analysis for Indonesian Language}
-  gem.summary       = %q{Stemmer for Indonesian based on Lucene.}
-  gem.homepage      = ""
+  gem.description   = %q{Stems Indonesian words based on Porter Stemmer, with the algorithm presented in "A Study of Stemming Effects on Information Retrieval in Bahasa Indonesia", Fadillah Z Tala.}
+  gem.summary       = %q{Porter Stemmer for Bahasa Indonesia.}
+  gem.homepage      = "https://github.com/apraditya/indonesian_stemmer"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
