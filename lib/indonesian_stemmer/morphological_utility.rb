@@ -7,12 +7,28 @@ module IndonesianStemmer
   POSSESSIVE_PRONOUN_CHARACTERS               = %w( ku mu nya )
   FIRST_ORDER_PREFIX_CHARACTERS               = %w( meng meny men mem me
                                                     peng peny pen pem di ter ke )
-  SPECIAL_FIRST_ORDER_PREFIX_CHARACTERS       = %w( meny peny pen )
+  SPECIAL_FIRST_ORDER_PREFIX_CHARACTERS       = %w( meng peng meny peny men pen
+                                                    mem pem )
   SECOND_ORDER_PREFIX_CHARACTERS              = %w( ber be per pe )
-  SPECIAL_SECOND_ORDER_PREFIX_CHARACTERS      = %w( be )
   NON_SPECIAL_SECOND_ORDER_PREFIX_CHARACTERS  = %w( ber per pe )
   SPECIAL_SECOND_ORDER_PREFIX_WORDS           = %w( belajar pelajar belunjur )
   SUFFIX_CHARACTERS                           = %w( kan an i )
+  WITH_VOWEL_SUBSTITUTION_PREFIX_CHARACTERS   = %w( meny peny men pen )
+
+  IRREGULARS_FOR_WORDS_BEGINS_WITH_K  = %w(
+    aget alah andung ata ejar eluar embali empis emuka ena enal encang endali ering
+    erja erut etahui etik ibar irim uasai uliti umpul unci unjung unyah upas urang )
+
+  IRREGULARS_FOR_WORDS_BEGINS_WITH_P  = %w(
+    adam ahat akai amer anas ancang anggang anggil anjat antul asang asti atuhi
+    ecah ecat elihara eluk ercik eriksa erintah esan ikir ilah ilih injam inta
+    isah otong otret uja uji ukul usat utar-balikkan utus )
+
+  IRREGULAR_PREFIX_CHARACTERS_ON_WORDS = {
+    'meng' => IRREGULARS_FOR_WORDS_BEGINS_WITH_K,
+    'peng' => IRREGULARS_FOR_WORDS_BEGINS_WITH_K,
+    'mem' => IRREGULARS_FOR_WORDS_BEGINS_WITH_P,
+    'pem' => IRREGULARS_FOR_WORDS_BEGINS_WITH_P,  }
 
   REMOVED_KE    = 1
   REMOVED_PENG  = 2
@@ -56,19 +72,8 @@ module IndonesianStemmer
       def remove_first_order_prefix(word)
         @number_of_syllables ||= total_syllables(word)
 
-        word_size = word.size
-        SPECIAL_FIRST_ORDER_PREFIX_CHARACTERS.each do |characters|
-          characters_size = characters.size
-          if starts_with?(word, word_size, characters) && word_size > characters_size && is_vowel?(word[characters_size])
-            @flags ||= collection_for(characters, 'removed')
-            reduce_syllable
-            word = substitute_word_character(word, characters)
-            slice_word_at_position( word,
-                                    characters_size-1,
-                                    :start )
-            return word
-          end
-        end
+        remove_and_substitute_characters_matching_collection(
+            word, collection_for(:special_first_order_prefix), :start )
 
         remove_characters_matching_collection( word,
                                               collection_for(:first_order_prefix),
@@ -164,12 +169,47 @@ module IndonesianStemmer
           word.slice!( multiplier*characters_size, characters_size)
         end
 
+        def remove_and_substitute_characters_matching_collection(word, collection, position)
+          word_size = word.size
+          collection.each do |characters|
+            characters_size = characters.size
+            if send("#{position}s_with?", word, word_size, characters) &&
+                  word_size > characters_size && is_vowel?(word[characters_size])
+
+              @flags ||= collection_for(characters, 'removed')
+              reduce_syllable
+
+              if WITH_VOWEL_SUBSTITUTION_PREFIX_CHARACTERS.include?(characters) ||
+                    contains_irregular_prefix?(word, characters)
+
+                word = substitute_word_character(word, characters)
+                slice_word_at_position( word,
+                                        characters_size-1,
+                                        :start )
+                return word
+              end
+            end
+          end
+        end
+
+        def contains_irregular_prefix?(word, characters)
+          if IRREGULAR_PREFIX_CHARACTERS_ON_WORDS.keys.include?(characters)
+            IRREGULAR_PREFIX_CHARACTERS_ON_WORDS[characters].any? do |chopped_word|
+              word[characters.size, word.size] == chopped_word
+            end
+          end
+        end
+
         def substitute_word_character(word, characters)
           substitute_char = case
           when %w(meny peny).include?(characters)
             's'
-          when characters == 'pen'
+          when %w(men pen).include?(characters)
             't'
+          when %w(meng peng).include?(characters)
+            'k'
+          when %w(mem pem).include?(characters)
+            'p'
           end
           word[characters.size-1] = substitute_char if substitute_char
           word
