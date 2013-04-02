@@ -24,6 +24,9 @@ module IndonesianStemmer
     ecah ecat elihara eluk ercik eriksa erintah esan ikir ilah ilih injam inta
     isah otong otret uja uji ukul usat utar-balikkan utus )
 
+  IRREGULARS_FOR_WORDS_BEGINS_WITH_N = %w( aas ada adi afi afsu aif aik akal akoda
+    alar ama angis anti arasi asab asib asional atif asehat asihat etral atural )
+
   IRREGULAR_PREFIX_CHARACTERS_ON_WORDS = {
     'meng' => IRREGULARS_FOR_WORDS_BEGINS_WITH_K,
     'peng' => IRREGULARS_FOR_WORDS_BEGINS_WITH_K,
@@ -194,10 +197,14 @@ module IndonesianStemmer
 
         def contains_irregular_prefix?(word, characters)
           if IRREGULAR_PREFIX_CHARACTERS_ON_WORDS.keys.include?(characters)
-            IRREGULAR_PREFIX_CHARACTERS_ON_WORDS[characters].any? do |chopped_word|
-              word[characters.size, word.size] == chopped_word
-            end
+            chopped_word_match_words_collection?(
+              word[characters.size, word.size],
+              IRREGULAR_PREFIX_CHARACTERS_ON_WORDS[characters] )
           end
+        end
+
+        def chopped_word_match_words_collection?(chopped_word, collection)
+          collection.any? { |w| w == chopped_word }
         end
 
         def substitute_word_character(word, characters)
@@ -205,7 +212,10 @@ module IndonesianStemmer
           when %w(meny peny).include?(characters)
             's'
           when %w(men pen).include?(characters)
-            't'
+            (chopped_word_match_words_collection?(
+                word[characters.size, word.size], IRREGULARS_FOR_WORDS_BEGINS_WITH_N
+              )
+            )? 'n' : 't'
           when %w(meng peng).include?(characters)
             'k'
           when %w(mem pem).include?(characters)
