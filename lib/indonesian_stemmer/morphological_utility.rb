@@ -75,8 +75,10 @@ module IndonesianStemmer
       def remove_first_order_prefix(word)
         @number_of_syllables ||= total_syllables(word)
 
+        previous_word = word.dup
         remove_and_substitute_characters_matching_collection(
             word, collection_for(:special_first_order_prefix), :start )
+        return previous_word if previous_word != word
 
         remove_characters_matching_collection( word,
                                               collection_for(:first_order_prefix),
