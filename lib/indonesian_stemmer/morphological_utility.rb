@@ -27,6 +27,16 @@ module IndonesianStemmer
   IRREGULARS_FOR_WORDS_BEGINS_WITH_N = %w( aas ada adi afi afsu aif aik akal akoda
     alar ama anti arasi asab asib asional atif asehat asihat atural etral ikah )
 
+  IRREGULARS_FOR_WORDS_BEGINS_WITH_R = %w( aba abak aban abas abat abet abit
+    abuk abun abung abut acak acau acik acuh acun adah adai adak adang adiasi
+    adikal adio adu aga agam agas agi agu aguk ahap ahasia ahat ahim ahmat aih
+    aja ajah ajalela ajam ajang ajin ajuk ajut akap akat akit aksi akuk akus
+    akut akyat alat alip amah amahtamah amah-tamah amai amal ambah ambai ambak
+    amban ambang ambat ambeh ambu ambut amin ampai ampak ampang ampas ampat
+    amping ampok ampung ampus amu amus anap anca ancah ancak ancang ancap
+    ancu ancung anda andai andak andat andau andek anduk andung angah angai
+    angak anggah asa usak )
+
   IRREGULAR_PREFIX_CHARACTERS_ON_WORDS = {
     'meng' => IRREGULARS_FOR_WORDS_BEGINS_WITH_K,
     'peng' => IRREGULARS_FOR_WORDS_BEGINS_WITH_K,
@@ -253,10 +263,20 @@ module IndonesianStemmer
         end
 
         def ambiguous_with_characters?(word, characters, position)
-          return false if position == :start
-          IRREGULAR_WORDS_ENDS_WITH_COMMON_CHARACTERS[characters].any? do |ambiguous_word|
-            return false unless %w(me be pe).include?(word[0,2])
-            ends_with?(word, word.size, ambiguous_word)
+          if position == :start
+            if characters == 'per'
+              chopped_word_match_words_collection?(word[3..-1],
+                  IRREGULARS_FOR_WORDS_BEGINS_WITH_R )
+            else
+              return false
+            end
+          else
+            IRREGULAR_WORDS_ENDS_WITH_COMMON_CHARACTERS[characters].any? do |ambiguous_word|
+              # To differentiate 'mobilmu' with 'berilmu'
+              return false unless %w(me be pe).include?(word[0,2])
+              # The rest is ok
+              ends_with?(word, word.size, ambiguous_word)
+            end
           end
         end
 
