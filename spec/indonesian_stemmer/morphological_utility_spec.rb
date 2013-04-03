@@ -581,6 +581,10 @@ describe IndonesianStemmer::MorphologicalUtility do
 
   describe '#remove_suffix' do
     describe "words with these suffix characters" do
+      before do
+        IndonesianStemmer.instance_variable_set("@flags", 0)
+      end
+
       describe "at the end of the word, should remove the suffix characters" do
         it "'kan'" do
           should_transform(:remove_suffix, 'katakan', 'kata')
