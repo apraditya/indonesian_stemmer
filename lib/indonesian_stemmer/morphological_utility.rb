@@ -22,16 +22,40 @@ module IndonesianStemmer
   IRREGULARS_FOR_WORDS_BEGINS_WITH_P  = %w(
     adam ahat akai amer anas ancang anggang anggil anjat antul asang asti atuhi
     ecah ecat elihara eluk ercik eriksa erintah esan ikir ilah ilih injam inta
-    isah otong otret uja uji ukul usat utar-balikkan utus )
+    isah otong otret uja uji ukul usat utar-balik utus )
 
   IRREGULARS_FOR_WORDS_BEGINS_WITH_N = %w( aas ada adi afi afsu aif aik akal akoda
-    alar ama angis anti arasi asab asib asional atif asehat asihat etral atural )
+    alar ama anti arasi asab asib asional atif asehat asihat atural etral ikah )
 
   IRREGULAR_PREFIX_CHARACTERS_ON_WORDS = {
     'meng' => IRREGULARS_FOR_WORDS_BEGINS_WITH_K,
     'peng' => IRREGULARS_FOR_WORDS_BEGINS_WITH_K,
     'mem' => IRREGULARS_FOR_WORDS_BEGINS_WITH_P,
     'pem' => IRREGULARS_FOR_WORDS_BEGINS_WITH_P,  }
+
+  IRREGULAR_WORDS_ENDS_WITH_COMMON_CHARACTERS = {
+    'kah' => %w(  bengkah berkah bingkah bongkah cekah firkah halakah halkah
+                  harakah ingkah jangkah jerkah kalah kekah kelakah kerakah kerkah
+                  khalikah langkah lukah markah mukah musyarakah nafkah naskah
+                  nikah pangkah rakah rekah rengkah sedekah sekah serakah serkah
+                  sungkah takah tekah telingkah tingkah tongkah ),
+
+    'lah' => %w(  balah belah beslah bilah celah galah islah istilah jumlah
+                  kalah kelah kilah lalah lelah makalah malah masalah
+                  muamalah mujadalah mukabalah olah onslah oplah pecahbelah
+                  pecah-belah pilah milah sekolah rihlah risalah salah serlah
+                  silsilah sudah sulalah telah tulah ulah uzlah walah wasilah ),
+
+    'pun' => %w(  ampun depun himpun lapun rapun rumpun ),
+
+    'ku'  => %w(  awabeku baku bangku beku beluku biku buku ceku ciku cuku deku
+                  jibaku kaku laku leku liku luku paku pangku peku perilaku saku
+                  siku suku teleku terungku tungku waluku ),
+
+    'mu'  => %w(  ilmu jamu jemu kemu ramu selumu tamu temu ),
+
+    'nya' => %w(  tanya  ),
+  }
 
   REMOVED_KE    = 1
   REMOVED_PENG  = 2
@@ -78,7 +102,7 @@ module IndonesianStemmer
         previous_word = word.dup
         remove_and_substitute_characters_matching_collection(
             word, collection_for(:special_first_order_prefix), :start )
-        return previous_word if previous_word != word
+        return word if previous_word != word
 
         remove_characters_matching_collection( word,
                                               collection_for(:first_order_prefix),
@@ -159,10 +183,12 @@ module IndonesianStemmer
         def remove_characters_matching_collection(word, collection, position)
           collection.each do |characters|
             if send("#{position}s_with?", word, word.size, characters)
-              @flags ||= collection_for(characters, 'removed')
-              reduce_syllable
-              slice_word_at_position(word, characters.size, position)
-              return word
+              unless ambiguous_with_characters?(word, characters, position)
+                @flags ||= collection_for(characters, 'removed')
+                reduce_syllable
+                slice_word_at_position(word, characters.size, position)
+                return word
+              end
             end
           end
 
@@ -181,12 +207,11 @@ module IndonesianStemmer
             if send("#{position}s_with?", word, word_size, characters) &&
                   word_size > characters_size && is_vowel?(word[characters_size])
 
-              @flags ||= collection_for(characters, 'removed')
-              reduce_syllable
-
               if WITH_VOWEL_SUBSTITUTION_PREFIX_CHARACTERS.include?(characters) ||
                     contains_irregular_prefix?(word, characters)
 
+                @flags ||= collection_for(characters, 'removed')
+                reduce_syllable
                 word = substitute_word_character(word, characters)
                 slice_word_at_position( word,
                                         characters_size-1,
@@ -206,7 +231,7 @@ module IndonesianStemmer
         end
 
         def chopped_word_match_words_collection?(chopped_word, collection)
-          collection.any? { |w| w == chopped_word }
+          collection.any? { |w| starts_with?(chopped_word, chopped_word.size, w) }
         end
 
         def substitute_word_character(word, characters)
@@ -225,6 +250,14 @@ module IndonesianStemmer
           end
           word[characters.size-1] = substitute_char if substitute_char
           word
+        end
+
+        def ambiguous_with_characters?(word, characters, position)
+          return false if position == :start
+          IRREGULAR_WORDS_ENDS_WITH_COMMON_CHARACTERS[characters].any? do |ambiguous_word|
+            return false unless %w(me be pe).include?(word[0,2])
+            ends_with?(word, word.size, ambiguous_word)
+          end
         end
 
         def reduce_syllable
