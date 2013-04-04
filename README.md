@@ -32,19 +32,7 @@ Or install it yourself as:
     'beriman'.stem                          # => "iman"
 
 ## Known Problems
-This gem is in active development, don't rely on this for your analysis or datamining projects. Here are the known problems:
-
-1. Fails to stem words with the following prefixes and conditions:
-	- **pe-** for words begin with **r**, like:
-		- *rasa* => *perasa*'
-		- *racik* => *peracik*
-	- **men-** for words begin with **t**, like:
-		- *tulis* => *menulis*
-		- *tangis* => *menangis*		
-	- **mem-** for words begin with **p**, like:
-		- *puji* => *memuji*
-		- *pakai* => *memakai*
-2. There is one spec failing to test remove_suffix for 'katakan'. However, running "`IndonesianStemmer.remove_suffix 'katakan'` returns the correct word `kata`.
+This gem is in active development, don't rely on this for your analysis or datamining projects. Currently there's no problems stemming Indonesian words. Please [submit a ticket](https://github.com/apraditya/indonesian_stemmer/issues/new) if you find one.
 
 
 ## Contributing
@@ -53,8 +41,9 @@ Initially, this gem is based on [Apache Lucene](http://lucene.apache.org/). Curr
 ### References
 Some references to help your contribution:
 
-1. To search Indonesian words and their roots, use the [Unofficial Kamus Besar Bahasa Indonesia](http://www.kamusbesar.com/)
-2. Wikipedia's [Prefiks dalam Bahasa Indonesia](http://id.wikipedia.org/wiki/Prefiks_dalam_bahasa_Indonesia) 
+1. [The Official Kamus Bahasa Indonesia](http://bahasa.kemdiknas.go.id/kbbi/index.php)
+2. To search Indonesian words and their roots, use the [Unofficial Kamus Besar Bahasa Indonesia](http://www.kamusbesar.com/)
+3. Wikipedia's [Prefiks dalam Bahasa Indonesia](http://id.wikipedia.org/wiki/Prefiks_dalam_bahasa_Indonesia) 
 
 
 ### Steps
