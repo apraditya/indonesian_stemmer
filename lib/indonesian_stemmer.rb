@@ -10,14 +10,19 @@ module IndonesianStemmer
 
     def stem(word, derivational_stemming = true)
       @flags = 0
-      @number_of_syllables = total_syllables word
 
-      remove_particle(word) if still_has_many_syllables?
-      remove_possessive_pronoun(word) if still_has_many_syllables?
+      if word =~ /\s/
+        word.split(' ').map { |w| stem(w) }
+      else
+        @number_of_syllables = total_syllables word
 
-      stem_derivational(word) if derivational_stemming
+        remove_particle(word) if still_has_many_syllables?
+        remove_possessive_pronoun(word) if still_has_many_syllables?
 
-      word
+        stem_derivational(word) if derivational_stemming
+
+        word
+      end
     end
 
 

@@ -1,6 +1,17 @@
 require 'spec_helper'
 
 describe IndonesianStemmer do
+  describe "Regarding number words passed" do
+    it 'one word should return the stemmed word' do
+      IndonesianStemmer.stem('bukukah').should be_a(String)
+    end
+
+
+    it 'many words should return an array of stemmed words' do
+      IndonesianStemmer.stem('bagaimanapun mencintai').should_not be_empty
+      IndonesianStemmer.stem('melihat menduga').should == ['lihat', 'duga']
+    end
+  end
   describe "covering the inflectional particles" do
     describe "'kah'" do
       it { should_stem 'bukukah', 'buku' }
