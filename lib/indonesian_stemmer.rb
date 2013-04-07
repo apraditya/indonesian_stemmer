@@ -46,6 +46,10 @@ end
 
 class String
   def stem
+    IndonesianStemmer.stem(self.dup)
+  end
+
+  def stem!
     IndonesianStemmer.stem(self)
   end
 end
