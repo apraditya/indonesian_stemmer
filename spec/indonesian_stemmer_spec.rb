@@ -68,6 +68,8 @@ describe IndonesianStemmer do
     describe "'me'" do
       it { should_stem 'merusak', 'rusak'}
       it { should_stem 'melayang', 'layang'}
+      it { should_stem 'memasak', 'masak'}
+      it { should_stem 'memandikan', 'mandi'}
     end
 
     describe "'peng'" do

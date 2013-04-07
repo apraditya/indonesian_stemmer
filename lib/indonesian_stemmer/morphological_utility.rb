@@ -194,6 +194,7 @@ module IndonesianStemmer
           collection.each do |characters|
             if send("#{position}s_with?", word, word.size, characters)
               unless ambiguous_with_characters?(word, characters, position)
+                next if characters == 'mem' && is_vowel?(word[characters.size])
                 @flags ||= collection_for(characters, 'removed')
                 reduce_syllable
                 slice_word_at_position(word, characters.size, position)
