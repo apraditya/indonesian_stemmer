@@ -1,4 +1,5 @@
 require "indonesian_stemmer/stemmer_utility"
+require "indonesian_stemmer/irregular_words"
 
 module IndonesianStemmer
 
@@ -15,57 +16,6 @@ module IndonesianStemmer
   SUFFIX_CHARACTERS                           = %w( kan an i )
   WITH_VOWEL_SUBSTITUTION_PREFIX_CHARACTERS   = %w( meny peny men pen )
 
-  IRREGULARS_FOR_WORDS_BEGINS_WITH_K  = %w(
-    aget alah andung ata ejar eluar embali empis emuka ena enal encang endali ering
-    erja erut etahui etik ibar irim uasai uliti umpul unci unjung unyah upas urang )
-
-  IRREGULARS_FOR_WORDS_BEGINS_WITH_P  = %w(
-    adam ahat akai amer anas ancang anggang anggil anjat antul asang asti atuhi
-    ecah ecat elihara eluk ercik eriksa erintah esan ikir ilah ilih injam inta
-    isah otong otret uja uji ukul usat utar-balik utus )
-
-  IRREGULARS_FOR_WORDS_BEGINS_WITH_N = %w( aas ada adi afi afsu aif aik akal akoda
-    alar ama anti arasi asab asib asional atif asehat asihat atural etral ikah )
-
-  IRREGULARS_FOR_WORDS_BEGINS_WITH_R = %w( aba abak aban abas abat abet abit
-    abuk abun abung abut acak acau acik acuh acun adah adai adak adang adiasi
-    adikal adio adu aga agam agas agi agu aguk ahap ahasia ahat ahim ahmat aih
-    aja ajah ajalela ajam ajang ajin ajuk ajut akap akat akit aksi akuk akus
-    akut akyat alat alip amah amahtamah amah-tamah amai amal ambah ambai ambak
-    amban ambang ambat ambeh ambu ambut amin ampai ampak ampang ampas ampat
-    amping ampok ampung ampus amu amus anap anca ancah ancak ancang ancap
-    ancu ancung anda andai andak andat andau andek anduk andung angah angai
-    angak anggah asa usak )
-
-  IRREGULAR_PREFIX_CHARACTERS_ON_WORDS = {
-    'meng' => IRREGULARS_FOR_WORDS_BEGINS_WITH_K,
-    'peng' => IRREGULARS_FOR_WORDS_BEGINS_WITH_K,
-    'mem' => IRREGULARS_FOR_WORDS_BEGINS_WITH_P,
-    'pem' => IRREGULARS_FOR_WORDS_BEGINS_WITH_P,  }
-
-  IRREGULAR_WORDS_ENDS_WITH_COMMON_CHARACTERS = {
-    'kah' => %w(  bengkah berkah bingkah bongkah cekah firkah halakah halkah
-                  harakah ingkah jangkah jerkah kalah kekah kelakah kerakah kerkah
-                  khalikah langkah lukah markah mukah musyarakah nafkah naskah
-                  nikah pangkah rakah rekah rengkah sedekah sekah serakah serkah
-                  sungkah takah tekah telingkah tingkah tongkah ),
-
-    'lah' => %w(  balah belah beslah bilah celah galah islah istilah jumlah
-                  kalah kelah kilah lalah lelah makalah malah masalah
-                  muamalah mujadalah mukabalah olah onslah oplah pecahbelah
-                  pecah-belah pilah milah sekolah rihlah risalah salah serlah
-                  silsilah sudah sulalah telah tulah ulah uzlah walah wasilah ),
-
-    'pun' => %w(  ampun depun himpun lapun rapun rumpun ),
-
-    'ku'  => %w(  awabeku baku bangku beku beluku biku buku ceku ciku cuku deku
-                  jibaku kaku laku leku liku luku paku pangku peku perilaku saku
-                  siku suku teleku terungku tungku waluku ),
-
-    'mu'  => %w(  ilmu jamu jemu kemu ramu selumu tamu temu ),
-
-    'nya' => %w(  tanya  ),
-  }
 
   REMOVED_KE    = 1
   REMOVED_PENG  = 2
@@ -234,10 +184,10 @@ module IndonesianStemmer
         end
 
         def contains_irregular_prefix?(word, characters)
-          if IRREGULAR_PREFIX_CHARACTERS_ON_WORDS.keys.include?(characters)
+          if IrregularWords::ON_PREFIX_CHARACTERS.keys.include?(characters)
             chopped_word_match_words_collection?(
               word[characters.size, word.size],
-              IRREGULAR_PREFIX_CHARACTERS_ON_WORDS[characters] )
+              IrregularWords::ON_PREFIX_CHARACTERS[characters] )
           end
         end
 
@@ -251,7 +201,7 @@ module IndonesianStemmer
             's'
           when %w(men pen).include?(characters)
             (chopped_word_match_words_collection?(
-                word[characters.size, word.size], IRREGULARS_FOR_WORDS_BEGINS_WITH_N
+                word[characters.size, word.size], IrregularWords::BEGINS_WITH_N
               )
             )? 'n' : 't'
           when %w(meng peng).include?(characters)
@@ -267,12 +217,12 @@ module IndonesianStemmer
           if position == :start
             if characters == 'per'
               chopped_word_match_words_collection?(word[3..-1],
-                  IRREGULARS_FOR_WORDS_BEGINS_WITH_R )
+                  IrregularWords::BEGINS_WITH_R )
             else
               return false
             end
           else
-            IRREGULAR_WORDS_ENDS_WITH_COMMON_CHARACTERS[characters].any? do |ambiguous_word|
+            IrregularWords::ENDS_WITH_COMMON_CHARACTERS[characters].any? do |ambiguous_word|
               # To differentiate 'mobilmu' with 'berilmu'
               return false unless %w(me be pe).include?(word[0,2])
               # The rest is ok
