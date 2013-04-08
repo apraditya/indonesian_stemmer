@@ -142,14 +142,12 @@ module IndonesianStemmer
 
         def remove_characters_matching_collection(word, collection, position)
           collection.each do |characters|
-            if send("#{position}s_with?", word, word.size, characters)
-              unless ambiguous_with_characters?(word, characters, position)
-                next if characters == 'mem' && is_vowel?(word[characters.size])
-                @flags ||= collection_for(characters, 'removed')
-                reduce_syllable
-                slice_word_at_position(word, characters.size, position)
-                return word
-              end
+            if match_position_and_not_ambiguous_with_characters?(word, characters, position)
+              next if characters == 'mem' && is_vowel?(word[characters.size])
+              @flags ||= collection_for(characters, 'removed')
+              reduce_syllable
+              slice_word_at_position(word, characters.size, position)
+              return word
             end
           end
 
@@ -162,23 +160,15 @@ module IndonesianStemmer
         end
 
         def remove_and_substitute_characters_matching_collection(word, collection, position)
-          word_size = word.size
           collection.each do |characters|
-            characters_size = characters.size
-            if send("#{position}s_with?", word, word_size, characters) &&
-                  word_size > characters_size && is_vowel?(word[characters_size])
-
-              if WITH_VOWEL_SUBSTITUTION_PREFIX_CHARACTERS.include?(characters) ||
-                    contains_irregular_prefix?(word, characters)
-
-                @flags ||= collection_for(characters, 'removed')
-                reduce_syllable
-                word = substitute_word_character(word, characters)
-                slice_word_at_position( word,
-                                        characters_size-1,
-                                        :start )
-                return word
-              end
+            if matching_characters_requires_substitution?(word, characters, position)
+              @flags ||= collection_for(characters, 'removed')
+              reduce_syllable
+              word = substitute_word_character(word, characters)
+              slice_word_at_position( word,
+                                      characters.size-1,
+                                      :start )
+              return word
             end
           end
         end
@@ -229,6 +219,29 @@ module IndonesianStemmer
               ends_with?(word, word.size, ambiguous_word)
             end
           end
+        end
+
+        def match_position_and_not_ambiguous_with_characters?(word, characters, position)
+          send("#{position}s_with?", word, word.size, characters) &&
+              !ambiguous_with_characters?(word, characters, position)
+        end
+
+        def match_characters_position_followed_by_vowel?(word, characters, position)
+          word_size = word.size
+          characters_size = characters.size
+
+          send("#{position}s_with?", word, word_size, characters) &&
+              word_size > characters_size && is_vowel?(word[characters_size])
+        end
+
+        def substitution_required?(word, characters)
+          WITH_VOWEL_SUBSTITUTION_PREFIX_CHARACTERS.include?(characters) ||
+              contains_irregular_prefix?(word, characters)
+        end
+
+        def matching_characters_requires_substitution?(word, characters, position)
+          match_characters_position_followed_by_vowel?(word, characters, position) &&
+              substitution_required?(word, characters)
         end
 
         def reduce_syllable
