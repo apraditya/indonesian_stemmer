@@ -263,6 +263,10 @@ describe IndonesianStemmer::MorphologicalUtility do
             should_transform(:remove_first_order_prefix, 'membangun', 'bangun')
           end
 
+          it "'mem' followed by vowel" do
+            should_transform(:remove_first_order_prefix, 'memilih', 'pilih')
+          end
+
           it "'me'" do
             should_transform(:remove_first_order_prefix, 'melukis', 'lukis')
           end
@@ -628,6 +632,16 @@ describe IndonesianStemmer::MorphologicalUtility do
         it "'i'" do
           should_not_set_flags :remove_suffix, 'tiduri'
         end
+      end
+    end
+
+    describe 'should not remove suffix characters for words ending with them' do
+      it "'kan'" do
+        should_not_transform(:remove_suffix, 'majikan')
+      end
+
+      it "'i'" do
+        should_not_transform(:remove_suffix, 'pandai')
       end
     end
   end

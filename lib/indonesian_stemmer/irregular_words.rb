@@ -23,9 +23,15 @@ module IndonesianStemmer
         end
     end
 
+    ends_with_i = []
     SPECIAL_LETTERS.each do |letter|
       const_set("BEGINS_WITH_#{letter}", load_words("#{letter.downcase}.txt", true))
+
+      words_begin_with_letter = load_words("#{letter.downcase}.txt")
+      ends_with_i += words_begin_with_letter.select { |w| w.end_with?('i') }
     end
+
+    ENDS_WITH_I = ends_with_i
 
     ON_PREFIX_CHARACTERS = {
       'meng' => BEGINS_WITH_K,
@@ -42,5 +48,8 @@ module IndonesianStemmer
       'mu'  => load_words('mu.txt'),
       'nya' => load_words('nya.txt'),
     }
+
+    ENDS_WITH_SUFFIX_CHARACTERS = %w( majikan ) + # ENDS_WITH_KAN
+                                  ENDS_WITH_I
   end
 end

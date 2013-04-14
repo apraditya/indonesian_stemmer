@@ -93,6 +93,8 @@ module IndonesianStemmer
       end
 
       def remove_suffix(word)
+        return word if ambiguous_with_suffices_ending_words?(word)
+
         @number_of_syllables ||= total_syllables(word)
 
         SUFFIX_CHARACTERS.each do |character|
@@ -219,6 +221,10 @@ module IndonesianStemmer
               ends_with?(word, word.size, ambiguous_word)
             end
           end
+        end
+
+        def ambiguous_with_suffices_ending_words?(word)
+          IrregularWords::ENDS_WITH_SUFFIX_CHARACTERS.include?(word)
         end
 
         def match_position_and_not_ambiguous_with_characters?(word, characters, position)
