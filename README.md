@@ -6,24 +6,25 @@
 [![Code Climate](https://codeclimate.com/github/apraditya/indonesian_stemmer.png)](https://codeclimate.com/github/apraditya/indonesian_stemmer)
 
 
+Stem kata bahasa Indonesia berdasarkan Porter Stemmer, dengan menggunakan algoritma yang dipaparkan dalam paper [**A Study of Stemming Effects on Information Retrieval in Bahasa Indonesia**](http://www.illc.uva.nl/Publications/ResearchReports/MoL-2003-02.text.pdf), oleh Fadillah Z Tala.
 
-Stems Indonesian words based on Porter Stemmer, with the algorithm presented in [**A Study of Stemming Effects on Information Retrieval in Bahasa Indonesia**](http://www.illc.uva.nl/Publications/ResearchReports/MoL-2003-02.text.pdf), by Fadillah Z Tala.
+English translation is available [here](https://github.com/apraditya/indonesian_stemmer/blob/master/README-EN.md).
 
-## Installation
+## Instalasi
 
-Add this line to your application's Gemfile:
+Tambahkan baris ini di Gemfile aplikasi anda:
 
     gem 'indonesian_stemmer'
 
-And then execute:
+Kemudian jalankan:
 
     $ bundle
 
-Or install it yourself as:
+Atau instal sendiri seperti ini:
 
     $ gem install indonesian_stemmer
 
-## Usage
+## Penggunaan
 
     require 'rubygems'
     require 'indonesian_stemmer'
@@ -31,25 +32,34 @@ Or install it yourself as:
     IndonesianStemmer.stem('mendengarkan')  # => "dengar"
     'beriman'.stem                          # => "iman"
 
-## Known Problems
-This gem is in active development, don't rely on this for your analysis or datamining projects. Currently there's no problems stemming Indonesian words. Please [submit a ticket](https://github.com/apraditya/indonesian_stemmer/issues/new) if you find one.
+Atau mencobanya langsung dari web: [indonesian-stemmer.adindap.com](http://indonesian-stemmer.adindap.com).
 
+## Masalah-masalah yang Diketahui
+Gem ini masih dalam tahap pengembangan dan penyempurnaan. Meskipun sudah banyak upaya dalam pemilihan kata dan penanganan kata-kata yang ambigu, jangan mengandalkan gem ini untuk analisa ilmiah atau proyek lainnya. Berikut adalah masalah-masalah yang diketahui atau kasus-kasus yang tidak ditangani oleh gem ini dengan benar:
 
-## Contributing
-Initially, this gem is based on [Apache Lucene](http://lucene.apache.org/). Currently it's just a ruby port from its analyzer for Indonesian. Its stemmer library only analyze the word length, therefore some modifications added in order to get the actual stemmed word. Feel free to download Lucene's source code under `analysis/common/src/java/org/apache/lucene/analysis/id/`.
+1. Kata-kata turunan yang memiliki kata dasar yang berbeda. Contohnya `memasak` yang memiliki 2 kata dasar yang sama, yaitu `pasak` dan `masak`. Saat ini kami mutuskan untuk mengeluarkan hasil kata dasar berdasarkan kata yang lebih umum digunakan (menurut pendapat kami). Dalam contoh ini, kata `masak` yang kami pilih.
+2. Kata-kata turunan yang berasal dari kata dasar yang hanya mengandung 1 suku kata. Contohnya `mengebom` yang berasal dari kata `bom`.
+3. Tidak menangani awalan se-, semua bentuk sisipan.
 
-### References
-Some references to help your contribution:
+Jika ada masalah lain di luar hal-hal di atas, silahkan buat [tiket baru](https://github.com/apraditya/indonesian_stemmer/issues/new)
 
-1. [The Official Kamus Bahasa Indonesia](http://bahasa.kemdiknas.go.id/kbbi/index.php)
-2. To search Indonesian words and their roots, use the [Unofficial Kamus Besar Bahasa Indonesia](http://www.kamusbesar.com/)
-3. Wikipedia's [Prefiks dalam Bahasa Indonesia](http://id.wikipedia.org/wiki/Prefiks_dalam_bahasa_Indonesia) 
+## Berkontribusi
+Awalnya, gem ini merupakan implementasi dari sistem penganalisa untuk bahasa Indonesia, dari proyek [Apache Lucene](http://lucene.apache.org/), ke dalam bahasa Ruby. Gem ini sudah mengalami beberapa perubahan algoritma dalam mengenali awalan kata, terutama terhadap kata-kata yang ambigu.
 
+### Referensi
+1. [Situs Resmi Kamus Bahasa Indonesia](http://bahasa.kemdiknas.go.id/kbbi/index.php)
+2. Untuk mencari dan memverifikasi kata indonesia, [Kateglo Bahtera](http://kateglo.bahtera.org/)
+3. Artikel Wikipedia yang berjudul [Prefiks dalam Bahasa Indonesia](http://id.wikipedia.org/wiki/Prefiks_dalam_bahasa_Indonesia) 
 
-### Steps
+### Langkah-langkah
+1. *Fork* proyek ini
+2. Buat branch untuk fitur anda (`git checkout -b my-new-feature`)
+3. *Commit* perubahan-perubahan yang anda buat (`git commit -am 'Tambahkan fitur baru'`)
+4. *Push* ke branch itu (`git push origin my-new-feature`)
+5. Ajukan ***Pull Request*** baru
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+## Terima kasih
+Setelah bersyukur kepada Allah Subhanahu Wa Ta'ala, kami ingin mengucapkan terima kasih kepada:
+
+- Fadillah Z Tala & [Apache Lucene](http://lucene.apache.org/) sehingga kami dapat mulai membuat gem ini
+- Penyedia [Kateglo Bahtera](http://kateglo.bahtera.org/), karena telah menyediakan API nya sehingga saya bisa memilih & memisahkan kata-kata ambigu, dan akhirnya memeriksa validitas hasil kata.
