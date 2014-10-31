@@ -1,9 +1,9 @@
 module IndonesianStemmer
   module IrregularWords
     SPECIAL_LETTERS = %w( K P N R )
-    
+
     class << self
-      
+
       private
         def load_words(filename, chopped = false)
           file = File.open path(filename), 'rb'
