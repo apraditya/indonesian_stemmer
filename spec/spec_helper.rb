@@ -1,5 +1,11 @@
 require 'indonesian_stemmer'
 
+RSpec.configure do |config|
+  config.expect_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end
+end
+
 def should_stem(word, expected_word)
   word.stem.should == expected_word
 end
